@@ -1,13 +1,40 @@
 import React, { useState } from "react";
+import { useMutation, gql } from "@apollo/client";
+
+//define mutation
+const CREATE_LINK_MUTATION = gql`
+  mutation PostMutation($description: String!, $url: String!) {
+    post(description: $description, url: $url) {
+      id
+      createdAt
+      url
+      description
+    }
+  }
+`;
 
 const CreateLink = () => {
   const [formState, setFormState] = useState({
     description: "",
     url: "",
   });
+
+  //destructure a function, in this case 'createLink' used to call the mutation
+  const [createLink] = useMutation(CREATE_LINK_MUTATION, {
+    variables: {
+      description: formState.description,
+      url: formState.url,
+    },
+  });
+
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          createLink();
+        }}
+      >
         <div className="flex flex-colum mt-3">
           <input
             className="mb-2"
