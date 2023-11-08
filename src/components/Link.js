@@ -32,9 +32,9 @@ const Link = (props) => {
     variables: {
       linkId: link.id,
     },
-    //read exact portion of apollo cache
+    //By passing FEED_QUERY to cache.readQuery enable us to read exact portion of apollo cache
+    //destructure the vote made by mutation, { data: { vote } }
     //create a new array of data that includes the vote that was made
-    //vote is destructed using {data: {vote}}
     //with the new list of votes ...
     //commit the changes to the cache using cache.WriteQuery passing in the new data
     update: (cache, { data: { vote } }) => {
@@ -43,7 +43,7 @@ const Link = (props) => {
       });
 
       const updatedLinks = feed.links.map((feedLink) => {
-        if (feedLink === link.id) {
+        if (feedLink.id === link.id) {
           return {
             ...feedLink,
             votes: [...feedLink.votes, vote],
