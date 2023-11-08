@@ -11,15 +11,29 @@ import {
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { AUTH_TOKEN } from "./constants";
 
 // httplink to connect ApolloClient to GraphQl API
 const httpLink = createHttpLink({
   uri: "http://localhost:4000",
 });
 
+//authenticate all request using middleware
+//Apollo links allows us to create middleware that modify request before they are sent to the server
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem(AUTH_TOKEN);
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
 // instantiate ApolloClient
 const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
