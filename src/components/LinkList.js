@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "./Link";
 import { useQuery, gql } from "@apollo/client";
+import { subscribe } from "graphql";
 
 const NEW_LINKS_SUBSCRIPTION = gql`
   subscription {
@@ -18,6 +19,33 @@ const NEW_LINKS_SUBSCRIPTION = gql`
         user {
           id
         }
+      }
+    }
+  }
+`;
+
+const NEW_VOTES_SUBSCRIPTION = gql`
+  subscription {
+    newVote {
+      id
+      link {
+        id
+        url
+        description
+        createdAt
+        postedBy {
+          id
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
+        }
+      }
+      user {
+        id
       }
     }
   }
@@ -70,6 +98,10 @@ const LinkList = () => {
         },
       });
     },
+  });
+
+  subscribeToMore({
+    document: NEW_VOTES_SUBSCRIPTION,
   });
 
   //   const linksToRender = [
